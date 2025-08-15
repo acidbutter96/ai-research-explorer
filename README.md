@@ -61,3 +61,18 @@ Made with ❤️ for the research community!
 ---
 
 📝 This project is licensed under the MIT License. See the LICENSE file for details.
+
+## 🧩 Git Commit Conventions
+
+All commit messages should be in English and follow a Conventional Commits style (e.g. `feat: add semantic search endpoint`).
+
+To enable the included commit template and hook:
+
+```bash
+git config commit.template .gitmessage
+chmod +x scripts/prepare-commit-msg
+ln -s ../../scripts/prepare-commit-msg .git/hooks/prepare-commit-msg 2>/dev/null || cp scripts/prepare-commit-msg .git/hooks/prepare-commit-msg
+```
+
+Template types:
+`feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`, `revert`.

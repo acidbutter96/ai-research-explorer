@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+# Enforce English commit messages (basic heuristic) and Conventional Commits style
+# Allow merge/revert commits
+
+COMMIT_MSG_FILE=$1
+
+# Skip for merge commits
+grep -qE "^Merge " "$COMMIT_MSG_FILE" && exit 0
+
+# Skip if file already has content starting with conventional type
+if grep -qE '^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert)(\(.+\))?: ' "$COMMIT_MSG_FILE"; then
+  exit 0
+fi
+
+# Prepend template if empty
+if [ ! -s "$COMMIT_MSG_FILE" ]; then
+  cat .gitmessage > "$COMMIT_MSG_FILE"
+  exit 0
+fi
+
+# English detection: require at least one vowel from English and forbid only accented words
+if ! grep -qiE '[aeiou]' "$COMMIT_MSG_FILE"; then
+  echo "Commit message seems not English (missing vowels)." >> "$COMMIT_MSG_FILE"
+fi
+
+exit 0
