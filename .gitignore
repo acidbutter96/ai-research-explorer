@@ -1,0 +1,53 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.env
+.env*
+*.venv
+venv/
+build/
+dist/
+*.egg-info/
+
+# Airflow
+airflow.db
+airflow.cfg
+logs/
+*.log
+unittest.cfg
+
+# FastAPI
+# (No specific files, but include general Python ignores)
+
+# Docker
+*.tar
+*.img
+docker-compose.override.yml
+.docker/
+
+# VS Code
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Misc
+*.sqlite3
+*.db
+
+# Streamlit
+.streamlit/
+
+# Node (if any frontend)
+node_modules/
+
+# Others
+*.bak
+*.swp
+*.swo
+
+# Ignore secrets
+secrets.*
