@@ -1,9 +1,10 @@
 from airflow.decorators import dag
 from tasks.convert_function_to_code import convert_function_to_code
 
+
 @dag(
     max_active_runs=1,
-    schedule_interval=None,
+    schedule=None,
     tags=['example', 'calculus'],
     catchup=False,
 )
@@ -28,7 +29,8 @@ def integral_calculator():
     # )
 
     convert_function_to_code_task = convert_function_to_code(function='x**2')
-    
+
     convert_function_to_code_task
-    
+
+
 integral_calculator()

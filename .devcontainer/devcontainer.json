@@ -1,18 +1,25 @@
 {
-  "name": "Airflow Dev Container",
+  "name": "AI Research Explorer (Airflow API)",
   "dockerComposeFile": "../docker-compose.yaml",
   "service": "airflow-apiserver",
   "workspaceFolder": "/opt/airflow",
+  "remoteUser": "airflow",
   "customizations": {
     "vscode": {
-      "settings": {
-        "python.defaultInterpreterPath": "/usr/local/bin/python"
-      },
       "extensions": [
         "ms-python.python",
-        "ms-python.vscode-pylance"
-      ]
+        "ms-python.vscode-pylance",
+        "ms-python.black-formatter",
+        "ms-python.isort",
+        "ms-azuretools.vscode-docker"
+      ],
+      "settings": {
+        "python.defaultInterpreterPath": "/usr/local/bin/python",
+        "python.formatting.provider": "black",
+        "editor.formatOnSave": true,
+        "python.analysis.autoImportCompletions": true
+      }
     }
   },
-  "postCreateCommand": "pip install --upgrade pip"
+  "postCreateCommand": "pip install --user --upgrade pip && pip install --user black isort"
 }
