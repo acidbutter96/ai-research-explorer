@@ -1,0 +1,10 @@
+psycopg2-binary==2.9.10
+asyncpg==0.29.0
+
+apache-airflow-providers-celery>=3.3.0,<4.0.0
+apache-airflow-providers-fab>=1.0.0,<2.0.0
+
+# Needed for FAB auth manager/API (not pulled automatically as dependency of provider)
+connexion>=3.0.0,<4.0.0
+
+redis>=5.0.0,<6.0.0
