@@ -13,7 +13,6 @@ dist/
 
 # Airflow
 airflow.db
-airflow.cfg
 logs/
 *.log
 unittest.cfg
