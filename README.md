@@ -58,6 +58,43 @@ A system to search, summarize, and explore scientific papers using LLMs, vector 
 
 Made with ❤️ for the research community!
 
+## 🪂 Airflow DAGs
+
+| DAG ID | Purpose |
+|--------|---------|
+| `example_hello_world` | Minimal example printing a greeting |
+| `integral_calculator` | Placeholder showing a simple task pattern |
+| `research_pipeline` | Core paper search → enrich → embed → store → summarize workflow |
+
+### research_pipeline overview
+
+Current placeholder stages (will be replaced with real logic):
+
+1. Search (mock) arXiv & Semantic Scholar with a default query (`federated learning`).
+2. Merge & deduplicate results.
+3. Simulate content extraction (adds sections & dummy full text).
+4. Generate simple deterministic hash embeddings.
+5. Simulate vector DB storage (returns a reference string via XCom).
+6. Produce a naive keyword frequency summary.
+
+Modify or extend any stage under `airflow/dags/tasks/`.
+
+### Run locally (Docker / Airflow)
+
+```bash
+docker compose up -d --build
+# open http://localhost:8080 and trigger `research_pipeline`
+```
+
+### Next implementation steps
+
+- Replace search placeholders with real API calls (`requests` already added; handle rate limiting & pagination).
+- Add PDF download + parsing (e.g., `pypdf`).
+- Swap hash embed with real embedding model (OpenAI, HuggingFace, Instructor). Batch for efficiency.
+- Integrate a vector DB (Postgres + pgvector, Chroma, Weaviate) em docker-compose & implementar upsert.
+- Expose semantic query API via FastAPI usando vetores armazenados.
+- Conectar Streamlit para disparar novas indexações (Airflow REST API) & chat.
+
 ---
 
 📝 This project is licensed under the MIT License. See the LICENSE file for details.
