@@ -58,6 +58,66 @@ A system to search, summarize, and explore scientific papers using LLMs, vector 
 
 Made with ❤️ for the research community!
 
+## 🐍 Python Environment Setup (Local Development)
+
+Follow these steps if you want to run parts of the project (e.g. develop DAGs or APIs) directly on your machine instead of (or before) using Docker.
+
+### 1. Prerequisites
+
+- Python 3.11+ installed (`python3 --version`)
+- `pip` available (it ships with Python 3.11+)
+- (Optional but recommended) A version manager like `pyenv` to keep Python versions isolated
+
+### 2. Create and activate a virtual environment
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate  # On Windows: .venv\\Scripts\\activate
+```
+
+You should now see `(.venv)` in your shell prompt.
+
+### 3. Upgrade packaging tools (recommended)
+
+```bash
+pip install --upgrade pip setuptools wheel
+```
+
+### 4. Install project dependencies
+
+This repository has a large dependency set (Airflow providers, cloud SDKs, etc.). Full install:
+
+```bash
+pip install -r requirements.txt
+```
+
+If you only need to iterate on Airflow DAG logic quickly, you can create a lighter environment by installing a subset manually (e.g. `apache-airflow`, `requests`, `fastapi`)—but the above command guarantees all features.
+
+### 5. Deactivate when done
+
+```bash
+deactivate
+```
+
+### 6. (Optional) System package hints (Linux)
+
+Some wheels may fall back to source build (e.g. `mysqlclient`, `pyodbc`, `python-ldap`). If you hit build errors, install dev libs, e.g.:
+
+```bash
+sudo apt-get update && sudo apt-get install -y build-essential libssl-dev libffi-dev libldap2-dev libsasl2-dev unixodbc-dev libmysqlclient-dev
+```
+
+### 7. (Optional) Freeze new pins
+
+If you add new libraries during development:
+
+```bash
+pip install <package>
+pip freeze > requirements.new.txt  # Review changes before merging
+```
+
+---
+
 ## 🪂 Airflow DAGs
 
 | DAG ID | Purpose |

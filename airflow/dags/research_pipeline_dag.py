@@ -1,11 +1,15 @@
 from datetime import datetime
 from airflow.decorators import dag
-from airflow.models.baseoperator import chain
 
-from tasks.search_papers import search_arxiv, search_semantic_scholar, merge_and_deduplicate
+from tasks.search_papers import (
+    search_arxiv,
+    search_semantic_scholar,
+    merge_and_deduplicate,
+)
 from tasks.extract_content import extract_content
 from tasks.embed_and_store import generate_embeddings, store_in_vector_db
 from tasks.summarize import summarize_topics
+
 
 @dag(
     dag_id="research_pipeline",
@@ -37,14 +41,10 @@ def research_pipeline():
     storage_ref = store_in_vector_db(embedded)
     summary = summarize_topics(merged)
 
-    chain(
-        arxiv_results,
-        ss_results,
-        merged,
-        enriched,
-        embedded,
-        storage_ref,
-        summary,
+    (
+        arxiv_results >> ss_results >> merged >>
+        enriched >> embedded >> storage_ref >> summary
     )
+
 
 research_pipeline()

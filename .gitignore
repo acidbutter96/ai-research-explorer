@@ -50,3 +50,7 @@ node_modules/
 
 # Ignore secrets
 secrets.*
+
+
+# Ignore the PR_DESCRIPTION.md
+PR_DESCRIPTION.md

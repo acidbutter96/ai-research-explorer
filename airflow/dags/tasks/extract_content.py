@@ -1,9 +1,11 @@
 from airflow.decorators import task
 
+
 @task
 def extract_content(papers: list) -> list:
-    """Extract (simulate) full text & metadata enrichment for each paper.
-    Real version would fetch PDF or use API extended fields.
+    """
+        Extract (simulate) full text & metadata enrichment for each paper.
+        Real version would fetch PDF or use API extended fields.
     """
     enriched = []
     for p in papers:
