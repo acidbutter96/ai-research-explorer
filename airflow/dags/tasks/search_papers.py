@@ -1,9 +1,23 @@
+# import pandas as pd
+
 from airflow.decorators import task
+from airflow.providers.http.operators.http import HttpOperator
 
 # Placeholder search functions. In a real implementation you'd call arXiv
 # and Semantic Scholar APIs.
 # Keeping external calls minimal until dependencies & networking
 # are configured.
+
+get_arxiv_papers = HttpOperator(
+    task_id='search_arxiv',
+    endpoint='http://export.arxiv.org/api/query',
+    method='GET',
+    data={
+        "search_query": query,
+        "start": 0
+    },
+    log_response=True,
+)
 
 
 @task
@@ -13,6 +27,7 @@ def search_arxiv(query: str) -> list:
         Returns list of minimal metadata dicts.
     """
     # TODO: implement real API call
+
     return [
         {
             "source": "arxiv",
