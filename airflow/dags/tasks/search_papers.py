@@ -1,8 +1,8 @@
 import sys
 import os
-import pandas as pd
 
 from xmltodict import parse as xml_parse
+from typing import List
 
 sys.path.append(
     os.path.abspath(
@@ -22,7 +22,7 @@ from plugins.arxiv_api_plugin import ArxivApiOperator # noqa
 
 
 @task
-def search_arxiv(query: str) -> list:
+def search_arxiv(query: str) -> List:
     """
         Busca artigos no arXiv usando o ArxivApiOperator do plugin.
         Retorna lista de metadados mínimos dos artigos.
@@ -30,7 +30,7 @@ def search_arxiv(query: str) -> list:
     operator = ArxivApiOperator(
         action="search",
         task_id="search_arxiv",
-        query="dirac equation",
+        query=query,
     )
     results = operator.execute(context={})
     xml_dict = xml_parse(results.text)
@@ -41,7 +41,7 @@ def search_arxiv(query: str) -> list:
 
     rows = []
     for entry in entries:
-        article_id = entry["id"]
+        article_id = entry["id"].replace("abs", "pdf")
         title = entry["title"]
         summary = entry["summary"]
         published = entry["published"]
@@ -64,7 +64,7 @@ def search_arxiv(query: str) -> list:
 
 
 @task
-def search_semantic_scholar(query: str) -> list:
+def search_semantic_scholar(query: str) -> List:
     """
         Search Semantic Scholar for papers.
         Returns list of minimal metadata dicts.
@@ -73,7 +73,7 @@ def search_semantic_scholar(query: str) -> list:
     return [
         {
             "source": "semanticscholar",
-            "id": "ss:5678",
+            "article_id": "ss:5678",
             "title": f"Sample Semantic Scholar paper about {query}",
             "authors": ["Smith"],
             "abstract": "Another abstract.",
@@ -82,7 +82,10 @@ def search_semantic_scholar(query: str) -> list:
 
 
 @task
-def merge_and_deduplicate(arxiv_results: list, ss_results: list) -> list:
+def merge_and_deduplicate(
+    arxiv_results: List = [],
+    ss_results: List = [],
+) -> List:
     """
         Merge results lists and deduplicate by (source,id) now;
         later maybe by title DOI.
@@ -91,7 +94,7 @@ def merge_and_deduplicate(arxiv_results: list, ss_results: list) -> list:
     merged = []
     for collection in (arxiv_results or [], ss_results or []):
         for item in collection:
-            key = (item.get("source"), item.get("id"))
+            key = (item.get("source"), item.get("article_id"))
             if key in seen:
                 continue
             seen.add(key)

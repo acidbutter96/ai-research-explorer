@@ -3,7 +3,6 @@ from airflow.decorators import dag
 
 from tasks.search_papers import (
     search_arxiv,
-    search_semantic_scholar,
     merge_and_deduplicate,
 )
 from tasks.extract_content import extract_content
@@ -34,16 +33,18 @@ def research_pipeline():
     query = "federated learning"
 
     arxiv_results = search_arxiv(query)
-    ss_results = search_semantic_scholar(query)
-    merged = merge_and_deduplicate(arxiv_results, ss_results)
+    merged = merge_and_deduplicate(
+        arxiv_results=arxiv_results,
+        ss_results=[],
+    )
     enriched = extract_content(merged)
     embedded = generate_embeddings(enriched)
     storage_ref = store_in_vector_db(embedded)
     summary = summarize_topics(merged)
 
     (
-        arxiv_results >> ss_results >> merged >>
-        enriched >> embedded >> storage_ref >> summary
+        arxiv_results >> merged >> enriched >>
+        embedded >> storage_ref >> summary
     )
 
 

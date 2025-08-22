@@ -1,5 +1,4 @@
 psycopg2-binary==2.9.10
-asyncpg==0.29.0
-requests==2.32.3
 xmltodict==0.14.2
 pandas==2.1.4
+pypdf==6.0.0
