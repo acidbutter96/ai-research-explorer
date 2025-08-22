@@ -1,42 +1,66 @@
-# import pandas as pd
+import sys
+import os
+import pandas as pd
 
-from airflow.decorators import task
-from airflow.providers.http.operators.http import HttpOperator
+from xmltodict import parse as xml_parse
+
+sys.path.append(
+    os.path.abspath(
+        os.path.join(os.path.dirname(__file__), '../../')
+    )
+)
+
+
+from airflow.decorators import task # noqa
+from plugins.arxiv_api_plugin import ArxivApiOperator # noqa
+
 
 # Placeholder search functions. In a real implementation you'd call arXiv
 # and Semantic Scholar APIs.
 # Keeping external calls minimal until dependencies & networking
 # are configured.
 
-get_arxiv_papers = HttpOperator(
-    task_id='search_arxiv',
-    endpoint='http://export.arxiv.org/api/query',
-    method='GET',
-    data={
-        "search_query": query,
-        "start": 0
-    },
-    log_response=True,
-)
-
 
 @task
 def search_arxiv(query: str) -> list:
     """
-        Search arXiv for papers matching query.
-        Returns list of minimal metadata dicts.
+        Busca artigos no arXiv usando o ArxivApiOperator do plugin.
+        Retorna lista de metadados mínimos dos artigos.
     """
-    # TODO: implement real API call
+    operator = ArxivApiOperator(
+        action="search",
+        task_id="search_arxiv",
+        query="dirac equation",
+    )
+    results = operator.execute(context={})
+    xml_dict = xml_parse(results.text)
 
-    return [
-        {
+    entries = xml_dict["feed"]["entry"]
+    if not isinstance(entries, list):
+        entries = [entries]
+
+    rows = []
+    for entry in entries:
+        article_id = entry["id"]
+        title = entry["title"]
+        summary = entry["summary"]
+        published = entry["published"]
+        authors = entry["author"]
+        if not isinstance(authors, list):
+            authors = [authors]
+        rows.append({
             "source": "arxiv",
-            "id": "arxiv:1234",
-            "title": f"Sample arXiv paper about {query}",
-            "authors": ["Doe"],
-            "abstract": "Abstract text."
-        }
-    ]
+            "article_id": article_id,
+            "authors": [
+                author["name"]
+                for author in authors
+            ],
+            "title": title,
+            "summary": summary,
+            "published": published
+        })
+
+    return rows
 
 
 @task
