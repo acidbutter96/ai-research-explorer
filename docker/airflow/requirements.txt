@@ -2,3 +2,4 @@ psycopg2-binary==2.9.10
 xmltodict==0.14.2
 pandas==2.1.4
 pypdf==6.0.0
+apache-airflow-providers-openai==1.6.2
