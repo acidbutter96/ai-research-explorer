@@ -6,7 +6,13 @@ from tasks.search_papers import (
     merge_and_deduplicate,
 )
 from tasks.extract_content import extract_content
-from tasks.embed_and_store import generate_embeddings, store_in_vector_db
+from tasks.embed_and_store import (
+    generate_embeddings,
+    store_in_vector_db,
+    create_openai_summary_embedding_task,
+    attach_summary_embeddings,
+    extract_summaries,
+)
 from tasks.summarize import summarize_topics
 
 
@@ -38,13 +44,29 @@ def research_pipeline():
         ss_results=[],
     )
     enriched = extract_content(merged)
-    embedded = generate_embeddings(enriched)
+
+    # OpenAI: embeddings para os summaries (p['summary'])
+    summaries = extract_summaries(merged)
+    summary_emb = create_openai_summary_embedding_task(
+        input_text=summaries,
+        task_id="embed_summaries",
+        conn_id="openai_default",
+        model="text-embedding-3-small",
+    )
+
+    with_summary_vec = attach_summary_embeddings(
+        enriched,
+        summary_emb.output,
+    )
+
+    embedded = generate_embeddings(with_summary_vec)
     storage_ref = store_in_vector_db(embedded)
     summary = summarize_topics(merged)
 
     (
-        arxiv_results >> merged >> enriched >>
-        embedded >> storage_ref >> summary
+        arxiv_results >> merged >> enriched
+        >> summaries >> summary_emb >> with_summary_vec
+        >> embedded >> storage_ref >> summary
     )
 
 
